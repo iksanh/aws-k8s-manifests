@@ -1,0 +1,35 @@
+# Grafana config
+grafana:
+  adminPassword: "admin123"   # ganti di production!
+  service:
+    type: NodePort
+    nodePort: 32000            # akses Grafana di port ini
+
+# Prometheus config
+prometheus:
+  service:
+    type: NodePort
+    nodePort: 32001            # akses Prometheus UI di port ini
+  prometheusSpec:
+    retention: 15d             # simpan data 15 hari
+    resources:
+      requests:
+        memory: 400Mi
+        cpu: 200m
+      limits:
+        memory: 1Gi
+        cpu: 500m
+
+# Alertmanager
+alertmanager:
+  service:
+    type: NodePort
+    nodePort: 32002
+
+# Node exporter - monitoring CPU/RAM/Disk tiap node
+nodeExporter:
+  enabled: true
+
+# kube-state-metrics - monitoring K8s object (pods, deploy, dll)
+kubeStateMetrics:
+  enabled: true
