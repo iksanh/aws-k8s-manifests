@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
         - name: app
-          image: iksanhariji/aws-k8s-app:latest
+          image: iksanhariji/aws-k8s-app:17
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
