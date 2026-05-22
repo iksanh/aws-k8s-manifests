@@ -13,7 +13,6 @@ spec:
       chart: kube-prometheus-stack
       targetRevision: 65.5.0          # pin versi, not use "*"
       helm:
-        releaseName: kube-prometheus-stack
         valueFiles:
           - $values/apps/monitoring/values.yaml
     - repoURL: https://github.com/iksanh/aws-k8s-manifests
