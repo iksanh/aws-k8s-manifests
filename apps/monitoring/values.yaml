@@ -1,35 +1,93 @@
-# Grafana config
+# =========================================================
+# Grafana
+# =========================================================
 grafana:
-  adminPassword: "admin123"   # ganti di production!
-  service:
-    type: NodePort
-    nodePort: 32000            # akses Grafana di port ini
+  # Password  get from  existing secret not  plain text in Git!
+  # Make secret manual once via: 
+  #   kubectl create secret generic grafana-admin -n monitoring \
+  #     --from-literal=admin-user=admin \
+  #     --from-literal=admin-password='<strong-password>'
+  admin:
+    existingSecret: grafana-admin
+    userKey: admin-user
+    passwordKey: admin-password
 
-# Prometheus config
+  service:
+    type: ClusterIP                    # exposure via Ingress, NodePort not needed
+
+  persistence:
+    enabled: true
+    type: pvc
+    storageClassName: gp3
+    accessModes:
+      - ReadWriteOnce
+    size: 10Gi
+
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 1Gi
+
+# =========================================================
+# Prometheus
+# =========================================================
 prometheus:
   service:
-    type: NodePort
-    nodePort: 32001            # akses Prometheus UI di port ini
+    type: ClusterIP
+
   prometheusSpec:
-    retention: 15d             # simpan data 15 hari
+    retention: 15d
+    retentionSize: "16GB"              # ~80% from storage size
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: gp3
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 20Gi
     resources:
       requests:
-        memory: 400Mi
         cpu: 200m
+        memory: 400Mi
       limits:
-        memory: 1Gi
-        cpu: 500m
+        cpu: 1000m
+        memory: 2Gi
 
+# =========================================================
 # Alertmanager
+# =========================================================
 alertmanager:
   service:
-    type: NodePort
-    nodePort: 32002
+    type: ClusterIP
 
-# Node exporter - monitoring CPU/RAM/Disk tiap node
+  alertmanagerSpec:
+    storage:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: gp3
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 2Gi
+    resources:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+      limits:
+        cpu: 200m
+        memory: 256Mi
+
+# =========================================================
+# Exporters
+# =========================================================
 nodeExporter:
   enabled: true
 
-# kube-state-metrics - monitoring K8s object (pods, deploy, dll)
 kubeStateMetrics:
   enabled: true

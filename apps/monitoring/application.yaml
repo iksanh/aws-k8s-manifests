@@ -3,15 +3,22 @@ kind: Application
 metadata:
   name: prometheus-stack
   namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
 spec:
   project: default
-  source:
-    repoURL: https://prometheus-community.github.io/helm-charts
-    chart: kube-prometheus-stack
-    targetRevision: "*"        # atau pin versi: "58.x.x"
-    helm:
-      valueFiles:
-        - values.yaml          # pakai values.yaml dari repo Git kita
+  # Multi-source: source[0] = Helm chart, source[1] = values dari Git repo kita
+  sources:
+    - repoURL: https://prometheus-community.github.io/helm-charts
+      chart: kube-prometheus-stack
+      targetRevision: 65.5.0          # pin versi, not use "*"
+      helm:
+        releaseName: kube-prometheus-stack
+        valueFiles:
+          - $values/apps/monitoring/values.yaml
+    - repoURL: https://github.com/iksanh/aws-k8s-manifests
+      targetRevision: main
+      ref: values
   destination:
     server: https://kubernetes.default.svc
     namespace: monitoring
@@ -21,3 +28,10 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
+      - ServerSideApply=true           # penting untuk CRD yang besar (prometheus-operator)
+    retry:
+      limit: 5
+      backoff:
+        duration: 10s
+        factor: 2
+        maxDuration: 5m
