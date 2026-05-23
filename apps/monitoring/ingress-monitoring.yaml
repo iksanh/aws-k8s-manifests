@@ -5,10 +5,19 @@ metadata:
   name: grafana
   namespace: monitoring
   annotations:
+<<<<<<< HEAD
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
     nginx.ingress.kubernetes.io/use-forwarded-headers: "true"
+=======
+    cert-manager.io/cluster-issuer: letsencrypt-staging
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+>>>>>>> 6e1935e (feat: add cert ssl in ingress-monitoring)
 spec:
   ingressClassName: nginx
+  tls:
+    - hosts:
+        - grafana.iksanhariji.my.id
+      secretName: grafana-tls
   rules:
     - host: grafana.iksanhariji.my.id
       http:
@@ -34,6 +43,10 @@ metadata:
     nginx.ingress.kubernetes.io/auth-realm: "Authentication Required - Prometheus"
 spec:
   ingressClassName: nginx
+  tls:
+    - hosts:
+        - prometheus.iksanhariji.my.id
+      secretName: prometheus-tls
   rules:
     - host: prometheus.iksanhariji.my.id
       http:
