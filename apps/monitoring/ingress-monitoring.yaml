@@ -4,8 +4,15 @@ kind: Ingress
 metadata:
   name: grafana
   namespace: monitoring
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-staging
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
 spec:
   ingressClassName: nginx
+  tls:
+    - hosts:
+        - grafana.iksanhariji.my.id
+      secretName: grafana-tls
   rules:
     - host: grafana.iksanhariji.my.id
       http:
@@ -14,7 +21,7 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: prometheus-stack-grafana 
+                name: prometheus-stack-grafana
                 port:
                   number: 80
 ---
@@ -29,11 +36,17 @@ metadata:
   name: prometheus
   namespace: monitoring
   annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-staging
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
     nginx.ingress.kubernetes.io/auth-type: basic
     nginx.ingress.kubernetes.io/auth-secret: prometheus-basic-auth
     nginx.ingress.kubernetes.io/auth-realm: "Authentication Required - Prometheus"
 spec:
   ingressClassName: nginx
+  tls:
+    - hosts:
+        - prometheus.iksanhariji.my.id
+      secretName: prometheus-tls
   rules:
     - host: prometheus.iksanhariji.my.id
       http:
@@ -42,6 +55,6 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: prometheus-stack-kube-prom-prometheus 
+                name: prometheus-stack-kube-prom-prometheus
                 port:
                   number: 9090
