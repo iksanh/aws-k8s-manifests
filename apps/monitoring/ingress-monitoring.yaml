@@ -1,5 +1,9 @@
-# grafana ingress
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
 metadata:
+  name: grafana
+  namespace: monitoring
   annotations:
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
     nginx.ingress.kubernetes.io/use-forwarded-headers: "true"
@@ -17,8 +21,11 @@ spec:
                 port:
                   number: 80
 ---
-# prometheus ingress
+apiVersion: networking.k8s.io/v1
+kind: Ingress
 metadata:
+  name: prometheus
+  namespace: monitoring
   annotations:
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
     nginx.ingress.kubernetes.io/use-forwarded-headers: "true"
