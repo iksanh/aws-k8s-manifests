@@ -3,6 +3,10 @@ kind: Ingress
 metadata:
   name: argocd-server
   namespace: argocd
+  anotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/use-forwarded-headers: "true"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
 spec:
   ingressClassName: nginx
   rules:
