@@ -1,4 +1,3 @@
-# bootstrap/argocd-self.yaml
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -11,7 +10,7 @@ spec:
   source:
     repoURL: https://github.com/iksanh/aws-k8s-manifests
     targetRevision: main
-    path: apps/argo-cd
+    path: apps/argo-cd/resources
   destination:
     server: https://kubernetes.default.svc
     namespace: argocd

@@ -1,0 +1,42 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: aws-k8s-app
+  namespace: aws-k8s-app
+spec:
+  podSelector:
+    matchLabels:
+      app: aws-k8s-app
+  policyTypes:
+    - Ingress
+    - Egress
+
+  # Hanya allow traffic dari ingress-nginx
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: ingress-nginx
+      ports:
+        - port: 8000
+          protocol: TCP
+
+  # Allow DNS + HTTPS keluar (untuk external API calls jika ada)
+  egress:
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+      ports:
+        - port: 53
+          protocol: UDP
+        - port: 53
+          protocol: TCP
+    - to:
+        - ipBlock:
+            cidr: 0.0.0.0/0
+            except:
+              - 169.254.169.254/32     # block AWS metadata service
+      ports:
+        - port: 443
+          protocol: TCP
