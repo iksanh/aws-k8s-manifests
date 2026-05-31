@@ -10,10 +10,16 @@ spec:
   source:
     repoURL: https://github.com/iksanh/aws-k8s-manifests
     targetRevision: main
-    path: apps/fastapi
+    path: apps/fastapi/resources
   destination:
     server: https://kubernetes.default.svc
     namespace: aws-k8s-app
+  ignoreDifferences:
+    # replicas is managed by the HPA, not git — don't let selfHeal revert it
+    - group: apps
+      kind: Deployment
+      jsonPointers:
+        - /spec/replicas
   syncPolicy:
     automated:
       prune: true
