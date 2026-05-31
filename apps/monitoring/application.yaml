@@ -15,9 +15,16 @@ spec:
       helm:
         valueFiles:
           - $values/apps/monitoring/values.yaml
+    # Source 2: values reference (untuk $values)
     - repoURL: https://github.com/iksanh/aws-k8s-manifests
       targetRevision: main
       ref: values
+
+    # Source 3: deploy ingress + storageclass dari Git
+    - repoURL: https://github.com/iksanh/aws-k8s-manifests
+      targetRevision: main
+      path: apps/monitoring/resources
+      
   destination:
     server: https://kubernetes.default.svc
     namespace: monitoring
