@@ -5,13 +5,8 @@ metadata:
   name: grafana
   namespace: monitoring
   annotations:
-<<<<<<< HEAD
-    nginx.ingress.kubernetes.io/ssl-redirect: "false"
-    nginx.ingress.kubernetes.io/use-forwarded-headers: "true"
-=======
     cert-manager.io/cluster-issuer: letsencrypt-staging
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
->>>>>>> 6e1935e (feat: add cert ssl in ingress-monitoring)
 spec:
   ingressClassName: nginx
   tls:
