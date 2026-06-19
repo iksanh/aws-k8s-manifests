@@ -2,20 +2,17 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: example-app
- 
+  labels: { app: example-app }
 spec:
   replicas: 2
-  selector:
-    matchLabels:
-      app: example-app
+  selector: { matchLabels: { app: example-app } }
   template:
     metadata:
-      labels:
-        app: example-app
+      labels: { app: example-app }
     spec:
       containers:
       - name: example-app
-        image: quay.io/branz/prometheus-example-app:v0.5.0
+        image: quay.io/brancz/prometheus-example-app:v0.5.0
         ports:
         - name: web
-        - containerPort: 8080
+          containerPort: 8080
