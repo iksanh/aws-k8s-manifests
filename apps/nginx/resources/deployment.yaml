@@ -18,3 +18,24 @@ spec:
         image: nginx:1.25
         ports:
         - containerPort: 80
+
+  volumes:
+  - name: stub-status-conf
+    configMap:
+      name: nginx-stub-status
+    containers:
+    - image: nginx:1.25
+      name: nginx
+      ports:
+      - containerPort: 80
+      volumeMounts:
+      - name: stub-status-conf
+        mountPath: /etc/nginx/conf.d/stub_status.conf
+        subPath: stub_status.conf
+      - name: nginx-exporter
+        image: nginx/nginx-prometheus-exporter:1.1.0
+        args:
+        - --nginx.scrape-uri=http://localhost:8080/stub_status
+        ports:
+        - name: metrics
+          containerPort: 9113
